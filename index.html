@@ -180,7 +180,12 @@
 
       function drawCssTree(tree) {
         const container = document.getElementById("cssTree");
-        // container.classList.add(["grid"], ["place-items-center"]);
+        container.classList.add(
+          ["flex"],
+          ["flex-col"],
+          ["items-center"],
+          ["justify-center"]
+        );
         container.classList.add();
 
         container.innerHTML = "";
@@ -198,12 +203,12 @@
             occ.classList.add(["rounded-full"], ["text-neutral-500"]);
             const leafsWrapper = document.createElement("div");
             leafsWrapper.className =
-              "flex bg-neutral-700 bg-opacity-50 bg-blend-color-dodge w-full";
+              "bg-neutral-700 bg-opacity-50 bg-blend-color-dodge grid grid-cols-2 w-full";
 
             const w1 = document.createElement("div");
-            w1.className = "w-full flex flex-col";
+            w1.className = "w-full flex flex-col items-center";
             const w2 = document.createElement("div");
-            w2.className = "w-full flex flex-col";
+            w2.className = "w-full flex flex-col items-center";
 
             leafsWrapper.appendChild(w1);
             leafsWrapper.appendChild(w2);
