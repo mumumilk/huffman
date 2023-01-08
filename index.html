@@ -53,17 +53,21 @@
       <div id="results" class="flex-col hidden">
         <section class="flex flex-col space-y-5">
           <h2>Symbols</h2>
-          <div class="grid gap-2 grid-cols-7" id="symbols"></div>
+          <div class="grid gap-2 grid-cols-3 lg:grid-cols-7" id="symbols"></div>
         </section>
         <section class="flex flex-col space-y-5">
           <h2 class="">Entropy</h2>
           <!-- <span id="entropyFormula"></span> -->
-          <span id="entropyValue" class="text-4xl">1.123123</span>
+          <span id="entropyValue" class="text-4xl"></span>
+        </section>
+        <section class="flex flex-col space-y-5">
+          <h2 class="">Huffman avg length per symbol</h2>
+          <span id="avgLengthPerSymbol" class="text-4xl"></span>
         </section>
         <section class="flex flex-col space-y-5">
           <h2>Huffman tree</h2>
           <!-- <canvas id="canvasTree" width="736" height="1000"></canvas> -->
-          <div class="w-full max-w-full overflow-auto" id="cssTree"></div>
+          <div class="overflow-auto w-full" id="cssTree"></div>
         </section>
         <section class="flex flex-col space-y-5">
           <h2 class="">Output</h2>
@@ -106,7 +110,7 @@
           symbolChar.className = "text-4xl flex-1";
 
           const symbolProb = document.createElement("span");
-          symbolProb.innerText = leaf.probability.toFixed("2");
+          symbolProb.innerText = leaf.occurrences;
           symbolProb.className = "text-sm text-neutral-400";
 
           symbolsWrapper.appendChild(symbolChar);
@@ -176,54 +180,46 @@
 
       function drawCssTree(tree) {
         const container = document.getElementById("cssTree");
+        // container.classList.add(["grid"], ["place-items-center"]);
+        container.classList.add();
 
         container.innerHTML = "";
-
-        let level = 1;
+        level = 1;
 
         function drawNode(node, parent) {
-          let wrapper = document.createElement("div");
-          wrapper.className = "flex flex-col items-center justify-center";
-
           const occ = document.createElement("span");
-          occ.className =
-            "h-12 w-12 leading-none bg-neutral-800 grid place-items-center";
-          occ.style = "font-size: 1vw";
+          occ.className = "block";
+          // occ.style = "font-size: 1vw";
           occ.innerText = node.occurrences;
-          wrapper.appendChild(occ);
+
+          parent.appendChild(occ);
 
           if (node.leafs.length) {
-            occ.classList.add(["rounded-full"]);
+            occ.classList.add(["rounded-full"], ["text-neutral-500"]);
             const leafsWrapper = document.createElement("div");
-            leafsWrapper.className = "grid grid-cols-2 gap-4 w-full";
+            leafsWrapper.className =
+              "flex bg-neutral-700 bg-opacity-50 bg-blend-color-dodge w-full";
 
             const w1 = document.createElement("div");
-            w1.className = "block";
+            w1.className = "w-full flex flex-col";
             const w2 = document.createElement("div");
-            w2.className = "block";
-            // const w3 = document.createElement("div");
-            // w3.className = "w-full w-1/3";
+            w2.className = "w-full flex flex-col";
 
             leafsWrapper.appendChild(w1);
             leafsWrapper.appendChild(w2);
-            // leafsWrapper.appendChild(w3);
 
             drawNode(node.leafs[0], w1);
             drawNode(node.leafs[1], w2);
 
-            level += 1;
-            wrapper.appendChild(leafsWrapper);
+            level += 0.5;
+            parent.appendChild(leafsWrapper);
           } else {
             occ.innerText = node.character;
-            occ.classList.add(["rounded-lg"]);
+            occ.classList.add(["rounded-lg"], ["text-white"]);
           }
-
-          parent.appendChild(wrapper);
         }
 
         drawNode(tree[0], container);
-        container.width = (2 ^ level) * 48 + "px";
-        console.log((2 ^ level) * 48 + "px");
       }
 
       function getAvgLengthPerSymbol(leafs, dic) {
@@ -308,6 +304,9 @@
           leafs,
           huffman.dictionary
         );
+
+        document.getElementById("avgLengthPerSymbol").innerText =
+          huffman.avgLengthPerSymbol;
 
         huffman.compressed = ogCharArr
           .map((ch) => huffman.dictionary.get(ch))
